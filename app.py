@@ -36,6 +36,7 @@ def login():
             password = request.form['password']
             if form.validate():
                 if helpers.credentials_valid(username, password):
+                    session['id'] = os.urandom(128)
                     session['logged_in'] = True
                     session['username'] = username
                     return json.dumps({'status': 'Login successful'})
@@ -114,14 +115,14 @@ def handle_new_conn():
 
 
 # -------- Message Event ---------------------------------------------------------- #
-@sio.on('my event')
-def handle_new_url(json_data, methods=['GET', 'POST']):
-    print(f"Received new URL message: {json_data}")
+@sio.on('request')
+def handle_new_url(message):
+    print(f"Received new URL message: {message}")
     if session.get('logged_in'):
         user = helpers.get_user()
         return sio.emit('response', {
-            "user": user,
-            "body": f"Test text {os.urandom(3)}",
+            "user": str(user),
+            "body": f"{message}",
         }, callback=message_received)
     print("Not logged in...redirecting.")
     return redirect(url_for('login'))

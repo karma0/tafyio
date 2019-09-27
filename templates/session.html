@@ -23,9 +23,7 @@
       var form = $('form').on('submit', function(e) {
         e.preventDefault()
         let user_input = $('input.message').val()
-        socket.emit('request', {
-          url: user_input,
-        })
+        socket.emit('request', user_input)
         $('input.message').val('').focus()
       })
     })
@@ -34,7 +32,7 @@
       console.log(msg)
       if(typeof msg.user !== 'undefined') {
         $('h3').remove()
-        $('div.message_holder').append('<div><b style="color:#000">'+msg.user_name+'</b> '+msg.body+'</div>')
+        $('div.message_holder').append('<div><b style="color:#000">'+msg.user+'</b> '+msg.body+'</div>')
       }
     })
   </script>
